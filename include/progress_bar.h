@@ -13,6 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//
+// Author: nineKnight <mikezhen0707@gmail.com>
+//
+
 #ifndef PROGRESS_INCLUDE_PROGRESS_BAR_H_
 #define PROGRESS_INCLUDE_PROGRESS_BAR_H_
 
@@ -52,13 +56,17 @@ public:
                std::size_t max,
                std::size_t width,
                bool        auto_inc,
-               bool        show_time)
+               bool        show_time,
+               char        complete_char = '=',
+               char        incomplete_char = ' ')
    : min_(min),
      max_(max),
      current_(min),
      width_(width),
      auto_inc_(auto_inc),
      show_time_(show_time),
+     complete_char_(complete_char),
+     incomplete_char_(incomplete_char),
      timestamp_(std::chrono::high_resolution_clock::now()) {
     if (max_ <= min_) {
       throw std::range_error("max must be greater than min");
@@ -126,11 +134,11 @@ public:
     ss << '[';
     for (std::size_t i{0}; i <= bar_length; ++i) {
       if (i < position) {
-        ss << '-';
+        ss << complete_char_;
       } else if (i == position) {
         ss << '>';
       } else {
-        ss << ' ';
+        ss << incomplete_char_;
       }
     }
     ss << "] " << std::setw(3) << static_cast<std::size_t>(progress) << '%';
@@ -175,6 +183,8 @@ private:
   const std::size_t                                           width_;
   bool                                                        auto_inc_;
   bool                                                        show_time_;
+  const char                                                  complete_char_;
+  const char                                                  incomplete_char_;
   std::chrono::time_point<std::chrono::high_resolution_clock> timestamp_;
 };
 
